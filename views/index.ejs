@@ -1,0 +1,366 @@
+<!doctype html>
+<html>
+
+<head>
+  <title>Community Fridge</title>
+  <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.2/css/bootstrap.min.css">
+  <link rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.min.css">
+  <link rel="stylesheet" href="assets/css/main.css">
+</head>
+
+<body class="is-preload">
+
+  <!-- Wrapper -->
+  <div id="wrapper">
+
+    <!-- Main -->
+    <div id="main">
+      <div class="inner">
+
+        <!-- Header -->
+        <header id="header">
+          <img src="/images/logoo.jpg" class="logo">
+<!--Aminah: comment the social links since  we dont need them     <ul class="icons">
+            <li><a href="#" class="icon brands fa-twitter"><span class="label">Twitter</span></a></li>
+            <li><a href="#" class="icon brands fa-facebook-f"><span class="label">Facebook</span></a></li>
+            <li><a href="#" class="icon brands fa-snapchat-ghost"><span class="label">Snapchat</span></a></li>
+            <li><a href="#" class="icon brands fa-instagram"><span class="label">Instagram</span></a></li>
+            <li><a href="#" class="icon brands fa-medium-m"><span class="label">Medium</span></a></li> -->
+          </ul>
+        </header>
+
+        <!-- Banner -->
+        <section id="banner">
+          <div class="content">
+            <header>
+              <h1>Welcome to Community Fridges<br /></h1>
+              <p>Food is a right, not a privilege.</p>
+            </header>
+            <p>Community fridges are communal places where surplus food is shared with the local community by local businesses and individuals. A resource for communities to feed each other. Take what you need, leave what you can.</p>
+            <ul class="actions">
+              <li><a href="/resources" class="button big">Learn More</a></li>
+            </ul>
+          </div>
+          <span class="image object">
+            <!-- <img src="images/pic10.jpg" alt="" /> -->
+            <div id="map">
+              <div>
+                <h3>My Google Map</h3>
+                <script>
+                  function getUserLocation() {
+                    if (navigator.geolocation) {
+                      navigator.geolocation.getCurrentPosition(initMap);
+                    }
+                  }
+                  function initMap(pos) {
+                    const options = {
+                      zoom: 15,
+                      mapId: "84e3ebcf6b9c6a44",
+                      center: {
+                        lat: pos.coords.latitude,
+                        lng: pos.coords.longitude,
+                      },
+                    };
+                    const map = new google.maps.Map(
+                      document.getElementById("map"),
+                      options
+                    );
+                    const marker = new google.maps.Marker({
+                      position: {
+                        lat: pos.coords.latitude,
+                        lng: pos.coords.longitude,
+                      },
+                      map: map,
+                      icon: {
+                        url: "http://maps.google.com/mapfiles/ms/icons/green-dot.png",
+                      },
+                    });
+                    fetch(
+                      "locations?" +
+                        new URLSearchParams({
+                          lat: pos.coords.latitude,
+                          lng: pos.coords.longitude,
+                          distance: 1,
+                        }),
+                      {
+                        method: "get",
+                        headers: { "Content-Type": "application/json" },
+                      }
+                    )
+                      .then((response) => {
+                        console.log(response);
+                        if (response.ok) {
+                          return response.json();
+                        }
+                      })
+                      .then((data) => {
+                        console.log(data);
+                        for (let j = 0; j < data.locations.length; j++) {
+                          const name = data.locations[j].name;
+                          const address = data.locations[j].address;
+                          const lat = data.locations[j].lat;
+                          const lng = data.locations[j].lng;
+                          const details = data.locations[j].details;
+                          const thumbUp = data.locations[j].thumbUp;
+                          const thumbDown = data.locations[j].thumbDown;
+                          const infowindow = new google.maps.InfoWindow();
+                          const marker = new google.maps.Marker({
+                            position: new google.maps.LatLng(lat, lng),
+                            map: map,
+                            icon: {
+                              // add image url instead of binary
+                              scaledSize: new window.google.maps.Size(50, 50),
+                            },
+                            mapTypeId: google.maps.MapTypeId.ROADMAP,
+                            draggable: false,
+                            title: "pin",
+                            content: `<h1>${name}</h1>`,
+                          });
+                          google.maps.event.addListener(
+                            marker,
+                            "click",
+                            (function () {
+                              return function () {
+                                infowindow.setContent(
+                                  `<p>${name}</p>
+                                 <p>${address}</p> 
+                                 <p>${details}</p> 
+                                  <button class="btn"><a href="/page/${data.locations[j].id}"><p>Comments</p></a></button>`
+                                );
+                                infowindow.open(map, marker);
+                              };
+                            })(marker)
+                          );
+                        }
+                      });
+                  }
+                </script>
+              </div>
+            </div>
+          </span>
+        </section>
+
+        <!-- Section -->
+        <section>
+          <header class="major">
+            <h2>Community in Action</h2>
+          </header>
+          <div class="posts">
+            <article>
+              <a href="images/fridge1.jpg" class="image"><img src="images/fridge1.jpg" alt="" /></a>
+              <h3>Dorchester</h3>
+              <p>The original Dorchester community fridge, located in Fields Corner, doubled as a pantry and was protected by an insulated shed to allow it to operate through winter. This fridge is currently closed and seeking a new home.</p>
+              <!-- <ul class="actions">
+                <li><a href="#" class="button">More</a></li>
+              </ul> -->
+            </article>
+            <article>
+              <a href="images/fridge2.png" class="image" ><img src="images/fridge2.png" alt="" class="fridge2"/></a>
+              <h3>Brookline</h3>
+              <p>Located in Brookline Village in front of Brothers & Sisters Co., the Brookline Community Fridge came to life in May 2021.</p>
+              <!-- <ul class="actions">
+                <li><a href="#" class="button">More</a></li>
+              </ul> -->
+            </article>
+            <article>
+              <a href="images/fridge3.webp" class="image"><img src="images/fridge3.webp" alt="" /></a>
+              <h3>Malden</h3>
+              <p>Located across from the Cambridge Health Alliance office along the Northern Strand Community Trail, the second Malden Community Fridge debuted in May 2021. Find updates on Facebook.</p>
+              <!-- <ul class="actions">
+                <li><a href="#" class="button">More</a></li>
+              </ul> -->
+            </article>
+            <article>
+              <a href="images/fridge4.png" class="image"><img src="images/fridge4.png" alt="" /></a>
+              <h3>Somerville</h3>
+              <p>This is the second fridge from the Somerville team; see the first (in Union Square) below. This one, which also includes pantry space, can be found near the Temple Street Walgreens.</p>
+              <!-- <ul class="actions">
+                <li><a href="#" class="button">More</a></li>
+              </ul> -->
+            </article>
+            <article>
+              <a href="images/fridge5.png" class="image"><img src="images/fridge5.png" alt="" /></a>
+              <h3>Cambridge</h3>
+              <p>The Fridge in the Square debuted in front of the Sinclair in January 2021 and moved to its current location at the Democracy Center at 45 Mt. Auburn St. in June 2021.</p>
+              <!-- <ul class="actions">
+                <li><a href="#" class="button">More</a></li>
+              </ul> -->
+            </article>
+            <article>
+              <a href="images/fridge6.png" class="image"><img src="images/fridge6.png" alt="" /></a>
+              <h3>South End</h3>
+              <p>The South End Fridge opened in March 2021 in front of Make Shift Boston, an affordable co-working and events space on Columbus Avenue. It features a roof and some pantry shelves in addition to the fridge.</p>
+              <!-- <ul class="actions">
+                <li><a href="#" class="button">More</a></li>
+              </ul> -->
+            </article>
+          </div>
+        </section>
+
+        <!-- Section -->
+        <!-- <section>
+          <header class="major">
+            <h2>Ipsum sed dolor</h2>
+          </header>
+          <div class="posts">
+            <article>
+              <a href="#" class="image"><img src="images/pic01.jpg" alt="" /></a>
+              <h3>Interdum aenean</h3>
+              <p>Aenean ornare velit lacus, ac varius enim lorem ullamcorper dolore. Proin aliquam facilisis ante interdum. Sed nulla amet lorem feugiat tempus aliquam.</p>
+              <ul class="actions">
+                <li><a href="#" class="button">More</a></li>
+              </ul>
+            </article>
+            <article>
+              <a href="#" class="image"><img src="images/pic02.jpg" alt="" /></a>
+              <h3>Nulla amet dolore</h3>
+              <p>Aenean ornare velit lacus, ac varius enim lorem ullamcorper dolore. Proin aliquam facilisis ante interdum. Sed nulla amet lorem feugiat tempus aliquam.</p>
+              <ul class="actions">
+                <li><a href="#" class="button">More</a></li>
+              </ul>
+            </article>
+            <article>
+              <a href="#" class="image"><img src="images/pic03.jpg" alt="" /></a>
+              <h3>Tempus ullamcorper</h3>
+              <p>Aenean ornare velit lacus, ac varius enim lorem ullamcorper dolore. Proin aliquam facilisis ante interdum. Sed nulla amet lorem feugiat tempus aliquam.</p>
+              <ul class="actions">
+                <li><a href="#" class="button">More</a></li>
+              </ul>
+            </article>
+            <article>
+              <a href="#" class="image"><img src="images/pic04.jpg" alt="" /></a>
+              <h3>Sed etiam facilis</h3>
+              <p>Aenean ornare velit lacus, ac varius enim lorem ullamcorper dolore. Proin aliquam facilisis ante interdum. Sed nulla amet lorem feugiat tempus aliquam.</p>
+              <ul class="actions">
+                <li><a href="#" class="button">More</a></li>
+              </ul>
+            </article>
+            <article>
+              <a href="#" class="image"><img src="images/pic05.jpg" alt="" /></a>
+              <h3>Feugiat lorem aenean</h3>
+              <p>Aenean ornare velit lacus, ac varius enim lorem ullamcorper dolore. Proin aliquam facilisis ante interdum. Sed nulla amet lorem feugiat tempus aliquam.</p>
+              <ul class="actions">
+                <li><a href="#" class="button">More</a></li>
+              </ul>
+            </article>
+            <article>
+              <a href="#" class="image"><img src="images/pic06.jpg" alt="" /></a>
+              <h3>Amet varius aliquam</h3>
+              <p>Aenean ornare velit lacus, ac varius enim lorem ullamcorper dolore. Proin aliquam facilisis ante interdum. Sed nulla amet lorem feugiat tempus aliquam.</p>
+              <ul class="actions">
+                <li><a href="#" class="button">More</a></li>
+              </ul>
+            </article>
+          </div>
+        </section> -->
+
+      </div>
+    </div>
+
+    <!-- Sidebar -->
+    <div id="sidebar">
+      <div class="inner">
+
+        <!-- Search -->
+        <!-- <section id="search" class="alt">
+          <form method="post" action="#">
+          <input type="text" name="query" id="query" placeholder="Search" />
+        </form>
+      </section> -->
+
+        <!-- Menu -->
+        <nav id="menu">
+          <header class="major">
+            <h2>Menu</h2>
+          </header>
+          <ul>
+            <li><a href="/">Main</a></li>
+            <li><a href="/resources">Resources</a></li>
+            <li>
+              <span class="opener">Admin</span>
+              <ul>
+                <li><a href="/login">login</a></li>
+                <li><a href="/signup">Sign Up</a></li>
+                <li><a href="/admin">Admin</a></li>
+              </ul>
+            </li>
+            <li>
+              <!-- <span class="opener">Another Submenu</span>
+              <ul>
+                <li><a href="#">Lorem Dolor</a></li>
+                <li><a href="#">Ipsum Adipiscing</a></li>
+                <li><a href="#">Tempus Magna</a></li>
+                <li><a href="#">Feugiat Veroeros</a></li>
+              </ul>
+            </li>
+            <li><a href="#">Maximus Erat</a></li>
+            <li><a href="#">Sapien Mauris</a></li>
+            <li><a href="#">Amet Lacinia</a></li>
+          </ul> -->
+        </nav>
+
+        <!-- Section -->
+        <!-- <section>
+          <header class="major">
+            <h2>Ante interdum</h2>
+          </header>
+          <div class="mini-posts">
+            <article>
+              <a href="#" class="image"><img src="images/pic07.jpg" alt="" /></a>
+              <p>Aenean ornare velit lacus, ac varius enim lorem ullamcorper dolore aliquam.</p>
+            </article>
+            <article>
+              <a href="#" class="image"><img src="images/pic08.jpg" alt="" /></a>
+              <p>Aenean ornare velit lacus, ac varius enim lorem ullamcorper dolore aliquam.</p>
+            </article>
+            <article>
+              <a href="#" class="image"><img src="images/pic09.jpg" alt="" /></a>
+              <p>Aenean ornare velit lacus, ac varius enim lorem ullamcorper dolore aliquam.</p>
+            </article>
+          </div>
+          <ul class="actions">
+            <li><a href="#" class="button">More</a></li>
+          </ul>
+        </section> -->
+
+        <!-- Section -->
+        <!-- <section> -->
+          <section>
+           <header class="major majors">
+             <h2>Contact  Us</h2>
+           </header>
+           <p class="contact7">If you have any question or would like to volunteer please contact us! </p>
+           <ul >
+             <li class="contacts"><input class="formInput" placeholder="Your Name" type="email" tabindex="2" required></li>
+             <li class="contacts"><input class="formInput" placeholder="Your Email Address" type="email" tabindex="2" required></li>
+             <li class="contacts"><input class="formInput" placeholder="Your Phone Number/ Not required" type="email" tabindex="2"></li>
+             <li class="contacts"><textarea class="formInput" placeholder="Type your message here...." tabindex="5" required></textarea></li>
+             <li class="contacts"><button class="submit" type="submit">SUBMIT </button> </li>
+
+           </ul>
+        </section>
+
+        <!-- Footer -->
+        <!-- <footer id="footer">
+          <p class="copyright">&copy; Untitled. All rights reserved. Demo Images: <a href="https://unsplash.com">Unsplash</a>. Design: <a href="https://html5up.net">HTML5 UP</a>.</p>
+        </footer> -->
+
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Scripts -->
+  <script src="assets/js/jquery.min.js"></script>
+  <script src="assets/js/browser.min.js"></script>
+  <script src="assets/js/breakpoints.min.js"></script>
+  <script src="assets/js/util.js"></script>
+  <script src="assets/js/main.js"></script>
+  <script
+  src="https://maps.googleapis.com/maps/api/js?key=<%= API_KEY %>&callback=getUserLocation&v=weekly"
+  defer
+></script>
+
+</body>
+
+</html>
