@@ -49,9 +49,13 @@
                       <input type="text" class="form-control" placeholder="Street, City, State, Zip Code" name="address">
                     </div>
                     <div>
+                      <label>Website</label>
+                      <input type="text" class="form-control" placeholder="your url here" name="website">
+                    </div>
+                    <div>
                       <label >Details</label>
                       <textarea type="text" class="form-control" rows="3"
-                        placeholder="Gender Neutral, Changing Station, How to get there, anything you wanna add"
+                        placeholder="Where the fridge is located, what it is next to"
                         name="details"></textarea>
                     </div>
                     <button type="submit" >Submit</button>
@@ -80,6 +84,23 @@
 
                         <button type="submit">Submit</button>
                 </form>
+
+
+                <ul class="locations">
+                  <% for(var i=0; i<locations.length; i++) {%>
+                    <li class="location">
+                      <div>
+                        <div>
+                        <a href="<%= locations[i].website %>"><h3><%= locations[i].name %></h3></a>
+                        <p><a href="/edit/<%= locations[i]._id%>">Edit this Outhouse</a></p>
+                        <p><%= locations[i].address %></p>
+                        <p><%= locations[i].details %></p>
+                        </div>
+                      </div>
+                    </li>
+                    <% } %>
+                </ul>
+                
             </header>
             <p>Select the city of the resource you have found. Place the link in the first input section. Once done with that, please give a brief description of the resource you've provided and submit it.</p>
           </div>
@@ -125,8 +146,6 @@
                         const lat = data.locations[j].lat;
                         const lng = data.locations[j].lng;
                         const details = data.locations[j].details;
-                        const thumbUp = data.locations[j].thumbUp;
-                        const thumbDown= data.locations[j].thumbDown;
                         const infowindow = new google.maps.InfoWindow();
                         const marker = new google.maps.Marker({
                           position: new google.maps.LatLng(lat, lng),
@@ -282,8 +301,8 @@
       <ul>
         <li><a href="/login">login</a></li>
         <li><a href="/signup">Sign Up</a></li>
+        <li><a href="/logout">logout</a></li>
         <li><a href="/admin">Admin</a></li>
-        <li><a href="#">Feugiat Veroeros</a></li>
       </ul>
     </li>
     <li>

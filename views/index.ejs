@@ -101,8 +101,7 @@
                           const lat = data.locations[j].lat;
                           const lng = data.locations[j].lng;
                           const details = data.locations[j].details;
-                          const thumbUp = data.locations[j].thumbUp;
-                          const thumbDown = data.locations[j].thumbDown;
+                          const website = data.locations[j].website;
                           const infowindow = new google.maps.InfoWindow();
                           const marker = new google.maps.Marker({
                             position: new google.maps.LatLng(lat, lng),
@@ -125,7 +124,7 @@
                                   `<p>${name}</p>
                                  <p>${address}</p> 
                                  <p>${details}</p> 
-                                  <button class="btn"><a href="/page/${data.locations[j].id}"><p>Comments</p></a></button>`
+                                  <button class="btn"><a href="${website}"><p>Website</p></a></button>`
                                 );
                                 infowindow.open(map, marker);
                               };

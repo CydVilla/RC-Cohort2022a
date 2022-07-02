@@ -9,9 +9,9 @@ const isPointNear = require("./utils.js").isPointNear;
 const user = require("./models/user.js");
 
 
-module.exports = function(app, passport, db) {
+module.exports = function(app, passport, db, ObjectId) {
 
-//  code by henrylee and the RC community support
+
 // normal routes ===============================================================
 
     // show the home page (will also have our login links)
@@ -39,8 +39,7 @@ module.exports = function(app, passport, db) {
                 name: location.name,
                 address: location.address,
                 details: location.details,
-                thumbUp: location.thumbUp,
-                thumbDown: location.thumbDown,
+                website: location.website,
                 lat: location.lat,
                 lng: location.lng,
                 id: location._id,
@@ -66,9 +65,6 @@ module.exports = function(app, passport, db) {
         });
     });
   
-    app.get('/resources', function(req, res) {
-      res.render('resources.ejs');
-  });
   
     app.get("/admin", isLoggedIn, function (req, res) {
       db.collection("locations")
@@ -84,6 +80,22 @@ module.exports = function(app, passport, db) {
     });
 
 
+    app.get('/edit/:id', isLoggedIn, function(req, res) {
+      const postId = ObjectId(req.params.id)
+      db.collection('locations').find({_id: postId}).toArray((err, result) => {
+        if (err) return console.log(err)
+        res.render('edit.ejs', {
+          user : req.user,
+          locations: result,
+          API_KEY : API_KEY
+        })
+      })
+    });
+
+
+    app.get('/resources', function(req, res) {
+        res.render('resources.ejs');
+    });
     // // PROFILE SECTION =========================
     // app.get('/profile', isLoggedIn, function(req, res) {
     //     db.collection('messages').find().toArray((err, result) => {
@@ -103,57 +115,103 @@ module.exports = function(app, passport, db) {
 
 // message board routes ===============================================================
 
-    app.post('/messages', (req, res) => {
-      db.collection('messages').save({name: req.body.name, msg: req.body.msg, thumbUp: 0, thumbDown:0}, (err, result) => {
-        if (err) return console.log(err)
-        console.log('saved to database')
-        res.redirect('/admin')
+    app.post('/locations', (req, res) => {
+      geoCoder.geocode(req.body.address)
+      .then((geoCodeRes)=> {
+        console.log(geoCodeRes);
+        let firstResult = geoCodeRes[0];
+        let user = req.user._id
+        db.collection('locations').insertOne({
+          postedBy: user, 
+          name: req.body.name, 
+          address: req.body.address,
+          website: req.body.website,
+          details: req.body.details, 
+          lat: firstResult.latitude, 
+          lng: firstResult.longitude,
+        }, (err, result) => {
+          if (err) return console.log(err)
+          console.log('saved to database')
+          res.redirect('/admin')
+        })
       })
-    })
+      .catch((err)=> {
+        return console.log(err);
+      });
+    });
 
-    app.put('/messages', (req, res) => {
-      db.collection('messages')
-      .findOneAndUpdate({name: req.body.name, msg: req.body.msg}, {
-        $set: {
-          thumbUp:req.body.thumbUp + 1
-        }
-      }, {
-        sort: {_id: -1},
-        upsert: true
-      }, (err, result) => {
-        if (err) return res.send(err)
-        res.send(result)
-      })
-    })
+    app.post('/edit/:id', isLoggedIn, (req, res) => {
+      const postId = ObjectId(req.params.id)
+      db.collection('locations')
+        .findOneAndUpdate({ _id: postId }, {
+          $set: {
+            name: req.body.name,
+            address: req.body.address,
+            details: req.body.details,
+            website: req.body.website
+          }
+        }, (err, result) => {
+          if (err) return res.send(err);
+          res.redirect(`/admin`);
+        })
+    });
 
-    app.put('/down', (req, res) => {
-      db.collection('messages')
-      .findOneAndUpdate({name: req.body.name, msg: req.body.msg}, {
-        $set: {
-          thumbUp:req.body.thumbUp - 1
-        }
-      }, {
-        sort: {_id: -1},
-        upsert: true
-      }, (err, result) => {
-        if (err) return res.send(err)
-        res.send(result)
-      })
-    })
+    app.post('/edit/:zebra/delete', isLoggedIn, function (req, res) {
+      let postId = ObjectId(req.params.zebra)
+      db.collection('locations').remove({ _id: postId })
+      res.redirect("/admin")
+    });
 
-    app.delete('/messages', (req, res) => {
-      db.collection('messages').findOneAndDelete({name: req.body.name, msg: req.body.msg}, (err, result) => {
-        if (err) return res.send(500, err)
-        res.send('Message deleted!')
-      })
-    })
 
-    app.delete('/messages', (req, res) => {
-      db.collection('messages').findOneAndDelete({name: req.body.name, msg: req.body.msg}, (err, result) => {
-        if (err) return res.send(500, err)
-        res.send('Message deleted!')
-      })
-    })
+
+
+
+    //THIS WAS ALL FROM THE BASE CODE
+    // app.post('/messages', (req, res) => {
+    //   db.collection('messages').save({name: req.body.name, msg: req.body.msg, thumbUp: 0, thumbDown:0}, (err, result) => {
+    //     if (err) return console.log(err)
+    //     console.log('saved to database')
+    //     res.redirect('/admin')
+    //   })
+    // })
+
+    // app.put('/messages', (req, res) => {
+    //   db.collection('messages')
+    //   .findOneAndUpdate({name: req.body.name, msg: req.body.msg}, {
+    //     $set: {
+    //       thumbUp:req.body.thumbUp + 1
+    //     }
+    //   }, {
+    //     sort: {_id: -1},
+    //     upsert: true
+    //   }, (err, result) => {
+    //     if (err) return res.send(err)
+    //     res.send(result)
+    //   })
+    // })
+
+    // app.put('/down', (req, res) => {
+    //   db.collection('messages')
+    //   .findOneAndUpdate({name: req.body.name, msg: req.body.msg}, {
+    //     $set: {
+    //       thumbUp:req.body.thumbUp - 1
+    //     }
+    //   }, {
+    //     sort: {_id: -1},
+    //     upsert: true
+    //   }, (err, result) => {
+    //     if (err) return res.send(err)
+    //     res.send(result)
+    //   })
+    // })
+
+    // app.delete('/messages', (req, res) => {
+    //   db.collection('messages').findOneAndDelete({name: req.body.name, msg: req.body.msg}, (err, result) => {
+    //     if (err) return res.send(500, err)
+    //     res.send('Message deleted!')
+    //   })
+    // })
+
 
 // =============================================================================
 // AUTHENTICATE (FIRST LOGIN) ==================================================

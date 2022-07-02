@@ -11,7 +11,7 @@ mongoose.set('useNewUrlParser', true);
 mongoose.set('useUnifiedTopology', true);
 let passport = require('passport');
 let flash    = require('connect-flash');
-
+var ObjectId = require('mongodb').ObjectID
 let morgan       = require('morgan');
 let cookieParser = require('cookie-parser');
 let bodyParser   = require('body-parser');
@@ -25,7 +25,7 @@ let db
 mongoose.connect(configDB.url, (err, database) => {
   if (err) return console.log(err)
   db = database
-  require('./app/routes.js')(app, passport, db);
+  require('./app/routes.js')(app, passport, db, ObjectId);
 }); // connect to our database
 
 require('./config/passport')(passport); // pass passport for configuration
@@ -54,3 +54,4 @@ app.use(flash()); // use connect-flash for flash messages stored in session
 // launch ======================================================================
 app.listen(port);
 console.log('Connected to database on port: ' + port);
+console.log(`http://localhost:${port}`)
