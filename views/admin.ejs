@@ -92,7 +92,7 @@
                       <div>
                         <div>
                         <a href="<%= locations[i].website %>"><h3><%= locations[i].name %></h3></a>
-                        <p><a href="/edit/<%= locations[i]._id%>">Edit this Location</a></p>
+                        <p><a href="/edit/<%= locations[i]._id%>">Edit this Outhouse</a></p>
                         <p><%= locations[i].address %></p>
                         <p><%= locations[i].details %></p>
                         </div>
@@ -114,7 +114,7 @@
                 }
                 function initMap(pos) {
                   const options = {
-                    zoom: 10,
+                    zoom: 17,
                     mapId: 'e952a99f67dafb3e',
                     center: { lat: pos.coords.latitude, lng: pos.coords.longitude }
                   }
@@ -127,7 +127,7 @@
                   fetch('locations?' + new URLSearchParams({
                     lat: pos.coords.latitude,
                     lng: pos.coords.longitude,
-                    distance: 15
+                    distance: 1
                   }), {
                     method: 'get',
                     headers: { 'Content-Type': 'application/json' },
@@ -146,7 +146,6 @@
                         const lat = data.locations[j].lat;
                         const lng = data.locations[j].lng;
                         const details = data.locations[j].details;
-                        const website = data.locations[j].website;
                         const infowindow = new google.maps.InfoWindow();
                         const marker = new google.maps.Marker({
                           position: new google.maps.LatLng(lat, lng),
@@ -166,7 +165,7 @@
                               `<p>${name}</p> 
                               <p>${address}</p> 
                               <p>${details}</p>                       
-                              <button class="btn"><a href="${website}"><p>Website</p></a></button>`
+                              <button class="btn"><a href="/page/${data.locations[j].id}"><p>Comments</p></a></button>`
                             );
                             infowindow.open(map, marker);
                           }
