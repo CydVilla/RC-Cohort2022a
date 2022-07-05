@@ -11,7 +11,6 @@ const user = require("./models/user.js");
 
 module.exports = function(app, passport, db, ObjectId) {
 
-
 // normal routes ===============================================================
 
     // show the home page (will also have our login links)
